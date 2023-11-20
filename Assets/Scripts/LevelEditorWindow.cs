@@ -20,7 +20,7 @@ public class LevelEditorWindow : EditorWindow
 
     private Dictionary<Sprite, Texture2D> spriteTextureCache = new Dictionary<Sprite, Texture2D>();
 
-    [MenuItem("Match3/Level Editor")]
+    [MenuItem("M3G/Level Editor")]
     public static void ShowWindow()
     {
         GetWindow<LevelEditorWindow>("Level Editor");
