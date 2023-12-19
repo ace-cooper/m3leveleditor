@@ -6,14 +6,14 @@ using UnityEngine;
 public class LevelEditorWindow : EditorWindow
 {
     private LevelData currentLevel;
-    private List<Tile> tileSlots = new List<Tile>(); // List to hold the tile slots
+    private List<Tile> tileSlots = new List<Tile>();
 
-    private Tile selectedTile; // Tile that is currently selected for placement
-    private int selectedTileIndex = -1; // Index of the selected tile slot
-    private Vector2 scrollPosition; // Used for scrolling the level grid
-    private Vector2 tilesScrollPosition; // Used for scrolling the tile slots
-    private int width = 10; // Default width
-    private int height = 10; // Default height
+    private Tile selectedTile;
+    private int selectedTileIndex = -1;
+    private Vector2 scrollPosition;
+    private Vector2 tilesScrollPosition;
+    private int width = 10;
+    private int height = 10;
 
     private bool isLeftMouseButtonDown = false;
     private bool isRightMouseButtonDown = false;
@@ -30,26 +30,27 @@ public class LevelEditorWindow : EditorWindow
     {
         EditorGUILayout.LabelField("Level Editor", EditorStyles.boldLabel);
 
-        // Inputs for the width and height of the map grid
         width = EditorGUILayout.IntField("Width", width);
         height = EditorGUILayout.IntField("Height", height);
 
-        // Button to create a new level
         if (GUILayout.Button("Create New Level"))
         {
             currentLevel = new LevelData(width, height);
         }
 
-        // Button to add a new tile slot
+        if (GUILayout.Button("Save Level"))
+        {
+            SaveLevelAsScriptableObject();
+        }
+        
         if (GUILayout.Button("Add Tile Slot"))
         {
             tileSlots.Add(null);
         }
-
-        // Draw the tile slots
+        
         DrawTileSlots();
 
-        // Draw the level grid
+       
         if (currentLevel != null)
         {
             DrawLevelGrid();
@@ -69,7 +70,7 @@ public class LevelEditorWindow : EditorWindow
                 Texture2D tex = AssetPreview.GetAssetPreview(tileSlots[i].sprite);
                 if (tex == null)
                 {
-                    // If the asset preview is null, try converting the sprite to texture directly
+                  
                     tex = SpriteToTexture(tileSlots[i].sprite);
                 }
 
@@ -79,13 +80,13 @@ public class LevelEditorWindow : EditorWindow
                 }
                 else
                 {
-                    // If the texture is still null, draw a placeholder
+                    
                     EditorGUI.DrawRect(slotRect, Color.grey);
                 }
             }
             else
             {
-                // Draw an empty slot
+                
                 EditorGUI.DrawRect(slotRect, Color.grey);
             }
 
@@ -96,7 +97,7 @@ public class LevelEditorWindow : EditorWindow
 
             HandleSlotDragAndDrop(slotRect, i);
 
-            // Select the tile for placing when the slot is clicked
+         
             if (GUI.Button(slotRect, GUIContent.none, GUIStyle.none))
             {
                 selectedTile = tileSlots[i];
@@ -149,7 +150,7 @@ public class LevelEditorWindow : EditorWindow
             Rect cellRect = EditorGUILayout.GetControlRect(GUILayout.Width(50), GUILayout.Height(50));
             Tile tile = currentLevel.tiles[x, y];
 
-            // Only try to draw the texture if the sprite is cached
+      
             if (tile != null && tile.sprite != null)
             {
                         Texture2D tex;
@@ -234,6 +235,30 @@ public class LevelEditorWindow : EditorWindow
         {
             Debug.LogError($"Error converting sprite to texture: {e.Message}");
             return null;
+        }
+    }
+
+    private void SaveLevelAsScriptableObject()
+    {
+        string path = EditorUtility.SaveFilePanelInProject(
+            "Save Level as ScriptableObject",
+            "NewLevel.asset",
+            "asset",
+            "Please enter a file name to save the level data to"
+        );
+
+        if (path.Length != 0) 
+        {
+ 
+            LevelDataAsset levelDataAsset = CreateInstance<LevelDataAsset>();
+
+            levelDataAsset.tiles = currentLevel.tiles;
+
+            AssetDatabase.CreateAsset(levelDataAsset, path);
+            AssetDatabase.SaveAssets();
+
+            EditorUtility.FocusProjectWindow();
+            Selection.activeObject = levelDataAsset;
         }
     }
 
