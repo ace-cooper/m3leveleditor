@@ -19,3 +19,5 @@ The following features are planned for future development to enhance the functio
 - **Load Level Data**: A feature to load existing level data into the editor for modification.
 - **Multi-Layer Grid**: Support for adding multiple tiles at the same position to accommodate various tile types within the game, such as obstacles, power-ups, and layered backgrounds.
 - **Tileset Management**: Extending the tile management system to handle a variety of tilesets and categorize them according to their types and behaviors.
+
+![Cover](./Assets/Sprites/screenshot.png "Cover image")
